@@ -44,3 +44,9 @@ SDK需要引用导入工程的资源文件，通过了反射机制得到资源�
 public static final int *;
 }
 ```
+
+# use step 3
+add followding code in your module build.gradle file.
+```gradle
+implementation 'org.tuzhao:umeng:1.0.00'
+```
