@@ -48,5 +48,5 @@ public static final int *;
 # use step 3
 add followding code in your module build.gradle file.
 ```gradle
-implementation 'org.tuzhao:umeng:1.0.00'
+implementation 'org.tuzhao:umeng:1.0.01'
 ```
