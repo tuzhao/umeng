@@ -99,6 +99,7 @@ public final class UMengUtil {
     /**
      * 计数事件
      *
+     * @param context Context
      * @param eventId 当前统计的事件ID。
      */
     public static void onEvent(Context context, String eventId) {
@@ -108,6 +109,7 @@ public final class UMengUtil {
     /**
      * 计数事件
      *
+     * @param context Context
      * @param eventId 当前统计的事件ID。
      * @param label   事件的标签参数。
      */
@@ -118,6 +120,7 @@ public final class UMengUtil {
     /**
      * 计数事件
      *
+     * @param context Context
      * @param eventId 当前统计的事件ID。
      * @param map     当前事件的参数和取值（Key-Value键值对）。
      */
@@ -128,6 +131,7 @@ public final class UMengUtil {
     /**
      * 计算事件
      *
+     * @param context Context
      * @param eventID 当前统计的事件ID。
      * @param map     当前事件的参数和取值（Key-Value键值对）。
      * @param du      当前事件的数值，取值范围是-2,147,483,648 到 +2,147,483,647 之间的
@@ -152,6 +156,7 @@ public final class UMengUtil {
      * // ...
      * MobclickAgent.setFirstLaunchEvent(appContext, firstLaunchList);
      *
+     * @param context     Context
      * @param eventIdList 需要监听首次触发时机的自定义事件列表。
      */
     public static void setFirstLaunchEvent(Context context, List<String> eventIdList) {
@@ -161,7 +166,8 @@ public final class UMengUtil {
     /**
      * 如果开发者自己捕获了错误，需要手动上传到【友盟+】服务器
      *
-     * @param error 错误内容字符串。
+     * @param context Context
+     * @param error   错误内容字符串。
      */
     public static void reportError(Context context, String error) {
         MobclickAgent.reportError(context, error);
@@ -170,7 +176,8 @@ public final class UMengUtil {
     /**
      * 如果开发者自己捕获了错误，需要手动上传到【友盟+】服务器
      *
-     * @param e 错误发生时抛出的异常对象。
+     * @param context Context
+     * @param e       错误发生时抛出的异常对象。
      */
     public static void reportError(Context context, Throwable e) {
         MobclickAgent.reportError(context, e);
