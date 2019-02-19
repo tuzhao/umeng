@@ -9,6 +9,9 @@ import com.umeng.commonsdk.UMConfigure;
 import com.umeng.message.IUmengRegisterCallback;
 import com.umeng.message.PushAgent;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * @author tuzhao
  */
@@ -17,14 +20,27 @@ public final class UMengUtil {
     private static final String TAG = "UMengUtil";
     private static boolean isDebug = false;
 
-    public static void init(Context context, String appKey, String channel, String pushKey, boolean isOpenLog) {
+    /**
+     * @param context          Context
+     * @param appKey           当前友盟app使用的key
+     * @param channel          当前apk包使用的渠道号
+     * @param pushKey          友盟推送key
+     * @param isOpenLog        是否打开调试log
+     * @param isCatchException 是否错误统计功能
+     */
+    public static void init(Context context, String appKey, String channel, String pushKey, boolean isOpenLog, boolean isCatchException) {
         try {
             UMConfigure.setLogEnabled(isOpenLog);
             //基础组件包提供的初始化函数
             UMConfigure.init(context, appKey, channel, UMConfigure.DEVICE_TYPE_PHONE, pushKey);
             //将默认Session间隔时长改为30秒。
             MobclickAgent.setSessionContinueMillis(1000 * 30);
-            MobclickAgent.setCatchUncaughtExceptions(true);
+            // isEnable: false-关闭错误统计功能；true-打开错误统计功能（默认打开）
+            MobclickAgent.setCatchUncaughtExceptions(isCatchException);
+            //选用LEGACY_AUTO页面采集模式
+            MobclickAgent.setPageCollectionMode(MobclickAgent.PageMode.LEGACY_MANUAL);
+            //支持在子进程中统计自定义事件
+            UMConfigure.setProcessEvent(true);
             //获取消息推送代理示例
             PushAgent mPushAgent = PushAgent.getInstance(context);
             //注册推送服务，每次调用register方法都会回调该接口
@@ -78,6 +94,86 @@ public final class UMengUtil {
      */
     public static void pushStart(Context context) {
         PushAgent.getInstance(context).onAppStart();
+    }
+
+    /**
+     * 计数事件
+     *
+     * @param eventId 当前统计的事件ID。
+     */
+    public static void onEvent(Context context, String eventId) {
+        MobclickAgent.onEvent(context, eventId);
+    }
+
+    /**
+     * 计数事件
+     *
+     * @param eventId 当前统计的事件ID。
+     * @param label   事件的标签参数。
+     */
+    public static void onEvent(Context context, String eventId, String label) {
+        MobclickAgent.onEvent(context, eventId, label);
+    }
+
+    /**
+     * 计数事件
+     *
+     * @param eventId 当前统计的事件ID。
+     * @param map     当前事件的参数和取值（Key-Value键值对）。
+     */
+    public static void onEvent(Context context, String eventId, Map<String, String> map) {
+        MobclickAgent.onEvent(context, eventId, map);
+    }
+
+    /**
+     * 计算事件
+     *
+     * @param eventID 当前统计的事件ID。
+     * @param map     当前事件的参数和取值（Key-Value键值对）。
+     * @param du      当前事件的数值，取值范围是-2,147,483,648 到 +2,147,483,647 之间的
+     *                有符号整数，即int 32类型，如果数据超出了该范围，会造成数据丢包，
+     *                影响数据统计的准确性。
+     */
+    public static void onEventValue(Context context, String eventID, Map<String, String> map, int du) {
+        MobclickAgent.onEventValue(context, eventID, map, du);
+    }
+
+    /**
+     * 设置关注首次触发自定义事件接口
+     * <p>
+     * 如果用户需要统计特定自定义事件首次触发时机，可以通过setFirstLaunchEvent接口设置
+     * 监听首次触发事件列表，所有在此列表中的自定义事件，服务器都能对其首次触发进行统计。
+     * <p>
+     * 示例：监听用户首次付费事件
+     * List<String> firstLaunchList = new ArrayList<String>();
+     * firstLaunchList.add("pay_p");
+     * firstLaunchList.add("pay_because_dabai");
+     * firstLaunchList.add("pay_because_deng");
+     * // ...
+     * MobclickAgent.setFirstLaunchEvent(appContext, firstLaunchList);
+     *
+     * @param eventIdList 需要监听首次触发时机的自定义事件列表。
+     */
+    public static void setFirstLaunchEvent(Context context, List<String> eventIdList) {
+        MobclickAgent.setFirstLaunchEvent(context, eventIdList);
+    }
+
+    /**
+     * 如果开发者自己捕获了错误，需要手动上传到【友盟+】服务器
+     *
+     * @param error 错误内容字符串。
+     */
+    public static void reportError(Context context, String error) {
+        MobclickAgent.reportError(context, error);
+    }
+
+    /**
+     * 如果开发者自己捕获了错误，需要手动上传到【友盟+】服务器
+     *
+     * @param e 错误发生时抛出的异常对象。
+     */
+    public static void reportError(Context context, Throwable e) {
+        MobclickAgent.reportError(context, e);
     }
 
     private static void log(String msg) {
