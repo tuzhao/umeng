@@ -27,10 +27,19 @@ public final class UMengUtil {
      * @param pushKey          友盟推送key
      * @param isOpenLog        是否打开调试log
      * @param isCatchException 是否错误统计功能
+     * @param isEncrypt        是否对日志进行加密
      */
-    public static void init(Context context, String appKey, String channel, String pushKey, boolean isOpenLog, boolean isCatchException) {
+    public static void init(Context context, String appKey, String channel, String pushKey,
+                            boolean isOpenLog, boolean isCatchException, boolean isEncrypt) {
         try {
+            /*
+             * 是否打开调试log
+             */
             UMConfigure.setLogEnabled(isOpenLog);
+            /*
+             * 如果参数为true，SDK会对日志进行加密。加密模式可以有效防止网络攻击，提高数据安全性。
+             */
+            UMConfigure.setEncryptEnabled(isEncrypt);
             //基础组件包提供的初始化函数
             UMConfigure.init(context, appKey, channel, UMConfigure.DEVICE_TYPE_PHONE, pushKey);
             //将默认Session间隔时长改为30秒。

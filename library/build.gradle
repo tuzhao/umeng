@@ -52,6 +52,7 @@ dependencies {
     implementation 'com.umeng.umsdk:analytics:8.0.0'
     implementation 'com.umeng.umsdk:common:2.0.0'
     implementation 'com.umeng.umsdk:push:5.0.2'//PushSDK
+    implementation 'com.umeng.sdk:utdid:1.1.5.3'//PushSDK必须依赖utdid库，所以需要加入对应依赖
 
     implementation 'com.android.support:support-v4:28.0.0'
 }
