@@ -46,7 +46,9 @@ public static final int *;
 ```
 
 # use step 3
+look for latest version: https://dl.bintray.com/tuzhao/maven/org/tuzhao/umeng/
+
 add followding code in your module build.gradle file.
 ```gradle
-implementation 'org.tuzhao:umeng:1.0.01'
+implementation 'org.tuzhao:umeng:{latest version}'
 ```
