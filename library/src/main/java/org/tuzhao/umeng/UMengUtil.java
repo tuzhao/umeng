@@ -91,6 +91,8 @@ public final class UMengUtil {
 
     /**
      * 该方法是【友盟+】Push后台进行日活统计及多维度推送的必调用方法，请务必调用！
+     *
+     * @param context Context
      */
     public static void pushStart(Context context) {
         PushAgent.getInstance(context).onAppStart();
@@ -147,14 +149,6 @@ public final class UMengUtil {
      * <p>
      * 如果用户需要统计特定自定义事件首次触发时机，可以通过setFirstLaunchEvent接口设置
      * 监听首次触发事件列表，所有在此列表中的自定义事件，服务器都能对其首次触发进行统计。
-     * <p>
-     * 示例：监听用户首次付费事件
-     * List<String> firstLaunchList = new ArrayList<String>();
-     * firstLaunchList.add("pay_p");
-     * firstLaunchList.add("pay_because_dabai");
-     * firstLaunchList.add("pay_because_deng");
-     * // ...
-     * MobclickAgent.setFirstLaunchEvent(appContext, firstLaunchList);
      *
      * @param context     Context
      * @param eventIdList 需要监听首次触发时机的自定义事件列表。
