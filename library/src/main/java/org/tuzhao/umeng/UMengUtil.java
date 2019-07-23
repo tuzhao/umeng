@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.commonsdk.UMConfigure;
+import com.umeng.message.IUmengCallback;
 import com.umeng.message.IUmengRegisterCallback;
 import com.umeng.message.PushAgent;
 
@@ -13,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * 自己封装的简易友盟相关操作工具类
+ *
  * @author tuzhao
  */
 public final class UMengUtil {
@@ -24,7 +27,7 @@ public final class UMengUtil {
      * @param context          Context
      * @param appKey           当前友盟app使用的key
      * @param channel          当前apk包使用的渠道号
-     * @param pushKey          友盟推送key
+     * @param pushKey          友盟推送key Push推送业务的secret，需要集成Push功能时必须传入Push的secret，否则传空。
      * @param isOpenLog        是否打开调试log
      * @param isCatchException 是否错误统计功能
      * @param isEncrypt        是否对日志进行加密
@@ -46,7 +49,20 @@ public final class UMengUtil {
             MobclickAgent.setSessionContinueMillis(1000 * 30);
             // isEnable: false-关闭错误统计功能；true-打开错误统计功能（默认打开）
             MobclickAgent.setCatchUncaughtExceptions(isCatchException);
-            //选用LEGACY_AUTO页面采集模式
+            /*
+             * LEGACY_AUTO：
+             * SDK默认情况下使用此模式，对于多数老版本【友盟+】统计SDK的开发者，如果在您的App中之前没有使
+             * 用MobclickAgent.onPageStart/MobclickAgent.onPageEnd这两个接口对非Activity页面
+             * (如:Fragment)进行埋点统计。则请选择此模式，这样您的App埋点代码不需要做任何修改，SDK
+             * 即可正常工作。(需确保您应用中所有Activity中都已经手动
+             * 调用MobclickAgent.onResume/MobclickAgent.onPause接口)
+             *
+             * LEGACY_MANUAL：
+             * 对于已经在App中使用MobclickAgent.onPageStart/MobclickAgent.onPageEnd这两个接口对非
+             * Activity页面(如:Fragment)进行埋点统计的SDK老用户，则请选择LEGACY_MANUAL模式，这样您的
+             * App埋点代码不需要做任何修改，SDK即可正常工作。(需确保您应用中所有Activity中都已经手动调
+             * 用MobclickAgent.onResume/MobclickAgent.onPause接口)
+             */
             MobclickAgent.setPageCollectionMode(MobclickAgent.PageMode.LEGACY_MANUAL);
             //支持在子进程中统计自定义事件
             UMConfigure.setProcessEvent(true);
@@ -86,10 +102,26 @@ public final class UMengUtil {
         MobclickAgent.onPageEnd(fragment.getClass().getName());
     }
 
+    /**
+     * @param loginInfo 用户账号ID，长度小于64字节
+     */
     public static void userLogin(String loginInfo) {
         MobclickAgent.onProfileSignIn(loginInfo);
     }
 
+    /**
+     * @param Provider  账号来源。如果用户通过第三方账号登陆，可以调用此接口进行统计。支持自定义，
+     *                  不能以下划线”_”开头，使用大写字母和数字标识，长度小于32 字节; 如果是上市
+     *                  公司，建议使用股票代码。
+     * @param loginInfo 用户账号ID，长度小于64字节
+     */
+    public static void userLogin(String Provider, String loginInfo) {
+        MobclickAgent.onProfileSignIn(Provider, loginInfo);
+    }
+
+    /**
+     * 账号登出时需调用此接口，调用之后不再发送账号相关内容。
+     */
     public static void userLogout() {
         MobclickAgent.onProfileSignOff();
     }
@@ -184,6 +216,52 @@ public final class UMengUtil {
      */
     public static void reportError(Context context, Throwable e) {
         MobclickAgent.reportError(context, e);
+    }
+
+    /**
+     * 为了便于开发者更好的集成配置文件，我们提供了对于AndroidManifest配置文件的检查工具，可以
+     * 自行检查开发者的配置问题。SDK默认是不检查集成配置文件的。
+     *
+     * @param context Context
+     * @param check   true 启用检查集成配置文件
+     */
+    public static void setPushCheck(Context context, boolean check) {
+        PushAgent.getInstance(context).setPushCheck(check);
+    }
+
+    /**
+     * 推送打开 or 关闭设置
+     *
+     * @param context  Context
+     * @param enable   true 打开推送 false 关闭推送
+     * @param callback PushSetCallback
+     */
+    public static void setPushEnabled(Context context, boolean enable, final PushSetCallback callback) {
+        PushAgent agent = null;
+        try {
+            agent = PushAgent.getInstance(context);
+        } catch (Exception e) {
+            Log.e(TAG, "get push agent error", e);
+        }
+        if (null != agent) {
+            IUmengCallback uc = new IUmengCallback() {
+
+                @Override
+                public void onSuccess() {
+                    callback.onSuccess();
+                }
+
+                @Override
+                public void onFailure(String s, String s1) {
+                    callback.onFailure(s, s1);
+                }
+            };
+            if (enable) {
+                agent.enable(uc);
+            } else {
+                agent.disable(uc);
+            }
+        }
     }
 
     private static void log(String msg) {
