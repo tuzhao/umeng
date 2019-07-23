@@ -24,6 +24,55 @@ public final class UMengUtil {
     private static boolean isDebug = false;
 
     /**
+     * 这个方法主要是不初始化推送
+     *
+     * @param context          Context
+     * @param appKey           当前友盟app使用的key
+     * @param channel          当前apk包使用的渠道号
+     * @param isOpenLog        是否打开调试log
+     * @param isCatchException 是否错误统计功能
+     * @param isEncrypt        是否对日志进行加密
+     */
+    public static void init(Context context, String appKey, String channel, boolean isOpenLog,
+                            boolean isCatchException, boolean isEncrypt) {
+        try {
+            /*
+             * 是否打开调试log
+             */
+            UMConfigure.setLogEnabled(isOpenLog);
+            /*
+             * 如果参数为true，SDK会对日志进行加密。加密模式可以有效防止网络攻击，提高数据安全性。
+             */
+            UMConfigure.setEncryptEnabled(isEncrypt);
+            //基础组件包提供的初始化函数
+            UMConfigure.init(context, appKey, channel, UMConfigure.DEVICE_TYPE_PHONE, null);
+            //将默认Session间隔时长改为30秒。
+            MobclickAgent.setSessionContinueMillis(1000 * 30);
+            // isEnable: false-关闭错误统计功能；true-打开错误统计功能（默认打开）
+            MobclickAgent.setCatchUncaughtExceptions(isCatchException);
+            /*
+             * LEGACY_AUTO：
+             * SDK默认情况下使用此模式，对于多数老版本【友盟+】统计SDK的开发者，如果在您的App中之前没有使
+             * 用MobclickAgent.onPageStart/MobclickAgent.onPageEnd这两个接口对非Activity页面
+             * (如:Fragment)进行埋点统计。则请选择此模式，这样您的App埋点代码不需要做任何修改，SDK
+             * 即可正常工作。(需确保您应用中所有Activity中都已经手动
+             * 调用MobclickAgent.onResume/MobclickAgent.onPause接口)
+             *
+             * LEGACY_MANUAL：
+             * 对于已经在App中使用MobclickAgent.onPageStart/MobclickAgent.onPageEnd这两个接口对非
+             * Activity页面(如:Fragment)进行埋点统计的SDK老用户，则请选择LEGACY_MANUAL模式，这样您的
+             * App埋点代码不需要做任何修改，SDK即可正常工作。(需确保您应用中所有Activity中都已经手动调
+             * 用MobclickAgent.onResume/MobclickAgent.onPause接口)
+             */
+            MobclickAgent.setPageCollectionMode(MobclickAgent.PageMode.LEGACY_MANUAL);
+            //支持在子进程中统计自定义事件
+            UMConfigure.setProcessEvent(true);
+        } catch (Exception e) {
+            Log.w(TAG, "init umeng error", e);
+        }
+    }
+
+    /**
      * @param context          Context
      * @param appKey           当前友盟app使用的key
      * @param channel          当前apk包使用的渠道号
