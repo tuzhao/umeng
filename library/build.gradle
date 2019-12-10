@@ -1,30 +1,4 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.github.dcendents.android-maven'
-apply plugin: 'com.jfrog.bintray'
-
-ext {
-    bintrayRepo = 'maven'
-    bintrayName = 'umeng'
-
-    publishedGroupId = 'org.tuzhao'
-    libraryName = 'umeng'
-    artifact = 'umeng'
-
-    libraryDescription = 'umeng library for Android'
-
-    siteUrl = 'https://gitee.com/tuzhao/umeng'
-    gitUrl = 'git@gitee.com:tuzhao/umeng.git '
-
-    libraryVersion = LIBRARY_VERSION as String
-
-    developerId = 'tuzhao'
-    developerName = 'tuzhao'
-    developerEmail = 'tuzhaocn@gmail.com'
-
-    licenseName = 'The Apache Software License, Version 2.0'
-    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-    allLicenses = ["Apache-2.0"]
-}
 
 android {
     compileSdkVersion 28
@@ -53,11 +27,13 @@ dependencies {
     implementation 'com.umeng.umsdk:common:2.0.0'
     implementation 'com.umeng.umsdk:push:5.0.2'//PushSDK
     implementation 'com.umeng.sdk:utdid:1.1.5.3'//PushSDK必须依赖utdid库，所以需要加入对应依赖
-
-    implementation 'com.android.support:support-v4:28.0.0'
 }
 
-// upload command
-// ./gradlew clean build bintrayUpload -PdryRun=false
-apply from: 'bintrayv1.gradle'
-apply from: 'installv1.gradle'
+/*
+ * upload to jcenter
+ */
+//apply from: 'maven_server.gradle'
+/*
+ * upload to maven local
+ */
+apply from: 'maven_local.gradle'

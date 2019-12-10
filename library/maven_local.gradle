@@ -1,0 +1,17 @@
+/**
+ * @author tuzhao
+ */
+
+apply plugin: 'maven'
+
+uploadArchives {//新增
+    repositories.mavenDeployer {
+        repository(url: "file:///Users/tuzhao/.m2/repository")
+        // 唯一标识、包名
+        pom.groupId = "org.tuzhao"
+        // 项目名称
+        pom.artifactId = "umeng"
+        // 版本号
+        pom.version = LIBRARY_VERSION as String
+    }
+}
