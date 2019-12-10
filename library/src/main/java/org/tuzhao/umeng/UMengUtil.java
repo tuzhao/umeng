@@ -1,7 +1,6 @@
 package org.tuzhao.umeng;
 
 import android.content.Context;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 
 import com.umeng.analytics.MobclickAgent;
@@ -143,12 +142,24 @@ public final class UMengUtil {
         MobclickAgent.onPause(context);
     }
 
-    public static void onResume(Fragment fragment) {
-        MobclickAgent.onPageStart(fragment.getClass().getName());
+    public static void onResumeOfFragment(Object fragment) {
+        String className = fragment.getClass().getName();
+        if (isDebug) {
+            if (!className.equals("android.support.v4.app.Fragment")) {
+                logW("you should use fragment for onResumeOfFragment()");
+            }
+        }
+        MobclickAgent.onPageStart(className);
     }
 
-    public static void onPause(Fragment fragment) {
-        MobclickAgent.onPageEnd(fragment.getClass().getName());
+    public static void onPauseOfFragment(Object fragment) {
+        String className = fragment.getClass().getName();
+        if (isDebug) {
+            if (!className.equals("android.support.v4.app.Fragment")) {
+                logW("you should use fragment for onPauseOfFragment()");
+            }
+        }
+        MobclickAgent.onPageEnd(className);
     }
 
     /**
@@ -316,6 +327,12 @@ public final class UMengUtil {
     private static void log(String msg) {
         if (isDebug) {
             Log.d(TAG, msg);
+        }
+    }
+
+    private static void logW(String msg) {
+        if (isDebug) {
+            Log.w(TAG, msg);
         }
     }
 

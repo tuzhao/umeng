@@ -34,8 +34,8 @@ dependencies {
 /*
  * upload to jcenter
  */
-//apply from: 'maven_server.gradle'
+apply from: 'maven_server.gradle'
 /*
  * upload to maven local
  */
-apply from: 'maven_local.gradle'
+//apply from: 'maven_local.gradle'
