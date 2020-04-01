@@ -142,20 +142,39 @@ public final class UMengUtil {
         MobclickAgent.onPause(context);
     }
 
+    /**
+     * 在AUTO或MANUAL模式下，如果需要对非Activity页面，如Fragment、自定义View等非标准页面进行统计。
+     * 需要通过MobclickAgent.onPageStart/MobclickAgent.onPageEnd接口在合适的时机进行页面统计。
+     * <p>
+     * 一次成对的 onPageStart -> onPageEnd 调用，对应一次非Activity页面(如：Fragment)生命周期统计。
+     * <p>
+     * 在fragment生命周期onResume()里面调用
+     *
+     * @param fragment 这里我们做一个封装，只针对fragment
+     */
     public static void onResumeOfFragment(Object fragment) {
         String className = fragment.getClass().getName();
         if (isDebug) {
-            if (!className.equals("android.support.v4.app.Fragment")) {
+            if (className.equals("android.support.v4.app.Fragment") || className.equals("androidx.fragment.app.Fragment")) {
+                //...ignore...
+            } else {
                 logW("you should use fragment for onResumeOfFragment()");
             }
         }
         MobclickAgent.onPageStart(className);
     }
 
+    /**
+     * 在fragment生命周期onPause()里面调用
+     *
+     * @param fragment 这里我们做一个封装，只针对fragment
+     */
     public static void onPauseOfFragment(Object fragment) {
         String className = fragment.getClass().getName();
         if (isDebug) {
-            if (!className.equals("android.support.v4.app.Fragment")) {
+            if (className.equals("android.support.v4.app.Fragment") || className.equals("androidx.fragment.app.Fragment")) {
+                //...ignore...
+            } else {
                 logW("you should use fragment for onPauseOfFragment()");
             }
         }
